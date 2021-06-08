@@ -6,3 +6,5 @@
   -   Selection of suitable pre-trained bi-encoder sentence-BERT model for pairwise sentence scoring tasks on the input dataset  
   -   Selection of the training strategy to fine-tune the pretrained model
   -   To overcome limited annotated dataset issues, knowledge is transferred from cross-encoders to bi-encoders using Augmented SBERT 
+
+##### Dataset is not publicly accessible
