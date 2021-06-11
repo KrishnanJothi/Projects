@@ -88,33 +88,28 @@ def generate_eps(eps_length, action_size, task, baseline_Net, actor_network, opt
 
         # appending
         observations.append(obs)
+ 
+        # sampling an action according to the current policy and also the corresponding PDF value
+        action, pdf_val = act(obs/scale_vector, actor_network, action_size)
 
-        # To avoid Nan in next observation
-        while True:
-            # sampling an action according to the current policy and also the corresponding PDF value
-            action, pdf_val = act(obs / scale_vector, actor_network, action_size)
+        # Log of the PDF value
+        log_val = tf.math.log(pdf_val + 1e-37)
 
-            # Log of the PDF value
-            log_val = tf.math.log(pdf_val + 1e-37)
+        # Storing negative of the log (for the 'Loss' plot)
+        Neg_Log.append(-log_val)
 
-            # Storing negative of the log (for the 'Loss' plot)
-            Neg_Log.append(-log_val)
+        # fixed joints (if lists are empty, all joints are free)
+        fixed = []
+        fixed1 = []
 
-            # fixed joints
-            fixed = []
-            fixed1 = []
-            # Gripper action is chosen based on the task (fixed or stochastic)
-            gripper = [1.0]  # Always open
-            obs_check, reward, terminate = task.step(np.concatenate([fixed, action, fixed1, gripper], axis=-1))
+        # Gripper action is chosen based on the task (fixed or stochastic)
+        gripper = [1.0]  # Always open
+        obs, reward, terminate = task.step(np.concatenate([fixed, action, fixed1, gripper], axis=-1))
 
-            # Checking if the sampled action leads to Nan
-            if not any(tf.reshape(tf.math.is_nan(obs_check.get_low_dim_data()), shape=(40,))) \
-                    or not any(tf.reshape(tf.math.is_nan(reward), shape=(1,))):
-                break
-
-            print('Sampled action leads to Nan observation/reward.....  So resampling')
-
-        obs = obs_check
+        # Checking if the sampled action leads to Nan
+        if any(tf.reshape(tf.math.is_nan(obs.get_low_dim_data()), shape=(40,))) \
+            or any(tf.reshape(tf.math.is_nan(reward), shape=(1,))):
+            print('Sampled action led to Nan observation/reward.....')
 
         # appending
         rewards.append(reward)
@@ -134,7 +129,6 @@ def generate_eps(eps_length, action_size, task, baseline_Net, actor_network, opt
         Status = "Not Done"
 
     return observations, actions, returns, returns_base, Status, Neg_Log
-    # return observations, actions, returns, Status, Neg_Log
 
 
 def discount_rewards(reward):
@@ -283,9 +277,11 @@ def main():
     # Panda Robot configuration .yaml file to compute the scaling vector
     scale_vec = scaling_vector("/home/irp/PycharmProjects/RLPanda/default_config.yaml")
 
-    # Defining the neural network architecture
+    # Defining the neural network architectures
     # first term in the argument is chosen to be no of input low_dim_states
     actor_network = ConstructActorNetwork(40, Dof, bias_mu, bias_sigma)
+    
+    # Defining the baseline network 
     baseline_Network = ConstructBaselineNetwork(40)
     baseline_Network.compile(loss="mean_squared_error", optimizer="adam", metrics=["mean_squared_error"])
 
@@ -296,6 +292,7 @@ def main():
     episode_length = 40
     no_of_episodes = 40000
 
+    # Defining the optimizers for actor and baseline networks
     opt = keras.optimizers.Adam(learning_rate=0.00001, clipnorm=1.0)
     opt_baseline = keras.optimizers.Adam(learning_rate=0.001)
     loss_baseline_obj = tf.keras.losses.MeanSquaredError()
@@ -332,11 +329,10 @@ def main():
             train_summary_writer = tf.summary.create_file_writer(train_log_dir)
 
         # Generating multiple episodes
-        Observations, Actions, Returns, Return_Base, status, Loss = generate_eps(episode_length, Dof, task,
-                                                                                 baseline_Network, actor_network,
-                                                                                 opt_baseline, loss_baseline_obj,
-                                                                                 scale_vec)
-
+        Observations, Actions, Returns, Return_Base, status, Loss = generate_eps(episode_length, Dof,
+                                                                                 task, baseline_Network,
+                                                                                 actor_network, opt_baseline,
+                                                                                 loss_baseline_obj, scale_vec)
         if status == "Done":
             done_ = done_ + 1
 
