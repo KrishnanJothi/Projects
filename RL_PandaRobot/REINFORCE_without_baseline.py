@@ -121,8 +121,6 @@ def generate_eps(eps_length, action_size, task, actor_network, scale_vector):
     # Calculating the return from the array of rewards
     returns = discount_rewards(reward=rewards)
 
-    # returns_base = baselineFunction(returns, observations, baseline_Net, opt_baseline, Loss_obj, scale_vector)
-
     if success:
         Status = "Done"
     else:
@@ -192,30 +190,6 @@ def scaling_vector(loc):
         obs_scaling_vector = None
 
     return obs_scaling_vector
-
-
-def baselineFunction(discounted_rewards, observations, model, opt_baseline, loss_object, scaling_vec):
-    basefunc = []
-    for i in range(0, len(discounted_rewards)):
-        val = model(observations[i] / scaling_vec)
-        basefunc.append(discounted_rewards[i] - val)
-
-    NetworkUpdate(opt_baseline, model, observations, discounted_rewards, loss_object, scaling_vec)
-
-    return basefunc
-
-
-def NetworkUpdate(optimiser, model, observations, targets, loss_obj, scale_vec):
-    for k in range(len(observations)):
-        with tf.GradientTape() as tape:
-            predict = model(observations[k] / scale_vec, training=True)
-            loss = loss_obj(targets[k], predict)
-
-        # Compute Gradients
-        grads = tape.gradient(loss, model.trainable_variables)
-
-        # Apply gradients to update network weights
-        optimiser.apply_gradients(zip(grads, model.trainable_variables))
 
 
 def CustomLossGaussian(low_state, action, Return, action_size, actor_network, scale_vector):
