@@ -3,9 +3,10 @@
 ## Learning Goals
 
 - Understand the REINFORCE (Classical Monte Carlo Policy Gradient) Algorithm
-- Understand the effect of baseline in variance reduction
 - Understand the framework of RLBench Robot Learning Environment & Benchmark
 - Understand the implementation of REINFORCE, and its integration with continuous control simulated environment 
+- Understand the effect of baseline in reducing the variance and improving the learning speed
+- Understand the effect of learning rate decay on REINFORCE
 - Train the Panda agent to perform a benchmark task in RLBench, and interpret the results
 - Understand the limitations of the algorithm and the directions of future research
 
