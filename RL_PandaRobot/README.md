@@ -26,5 +26,3 @@
 - RLBench [Github Repo](https://github.com/stepjam/RLBench)
 - Python 3.7
 - Tensorflow 2.2 (or higher)
-
-Consolidated report of the research will be uploaded soon!
