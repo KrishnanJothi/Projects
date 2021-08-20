@@ -1,4 +1,4 @@
-## Computer Vision Projects
+### This repository contains the assignments of the 'Computer Vision and Machine Learning' lecture offered at TU Braunschweig.
 
 ### This repository deals with the following topics in Computer Vision, using both classical and deep learning approaches in python.
   - Feature detectors and descriptors
