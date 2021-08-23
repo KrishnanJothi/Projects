@@ -1,5 +1,8 @@
 # Evaluation of REINFORCE on benchmark tasks for Panda in RLBench
 
+## Trajectory of the trained 7 Dof Panda agent
+https://user-images.githubusercontent.com/75635905/130522631-399409eb-a648-4217-88a1-a8a55d6ab26b.mp4
+
 ## Learning Goals
 
 - Understand the REINFORCE (Classical Monte Carlo Policy Gradient) Algorithm
