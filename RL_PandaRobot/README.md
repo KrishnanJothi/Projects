@@ -18,6 +18,13 @@
 - Trajectory generation -> Since REINFORCE is well defined only for the episodic case, trajectory generation is a mandatory step, before updating the parameters of the model
 - Algorithm deployment -> Using the training data obtained from the generated trajectory, the parameters of the model are updated using stochastic gradient ascent REINFORCE update formula. The weights of the baseline network is updated in a supervised manner, with the "state-value" as the target.
 
+## Results
+
+- Reduced almost 75% of the training time by using the state-value function as a baseline.
+- Decaying the learning rate (hardly studied in RL) by a factor of 10 helped to avoid the early deterministic behavior of the agent.
+- Achieved 99% success rate on a simplified benchmark task in nearly 25000 episodes.
+- Investigated the need to maintain the stochasticity of action sampling since the agent is unable to explore even after 200k episodes when learning a complex stochastic policy.
+
 ## Prerequisites
 
 - OS -> Linux
