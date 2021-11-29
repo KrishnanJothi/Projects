@@ -395,16 +395,6 @@ def main():
             actor_network.save(model_log_dir + '.h5', include_optimizer=True)
             baseline_Network.save(model_log_dir_1 + '.h5', include_optimizer=True)
 
-        # Clearing the memory
-        del Observations
-        del Actions
-        del Returns
-        del Return_Base
-        del status
-        del Loss
-        del Avg_eps_return
-        del Loss_value
-        gc.collect()
 
     # closing the opened files
     gradfile.close()
